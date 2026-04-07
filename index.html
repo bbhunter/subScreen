@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Visual subdomain reconnaissance - screenshot subdomains at scale">
+  <title>SubScreen - Visual Subdomain Reconnaissance</title>
+  <link rel="icon" type="image/png" href="css/logo.png">
+  <link rel="preconnect" href="https://image.thum.io">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="header-brand">
+        <img src="css/logo.png" alt="" class="logo" width="36" height="36">
+        <div>
+          <h1 class="header-title">SubScreen</h1>
+          <p class="header-sub">Visual subdomain reconnaissance</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <span class="version">v2.0</span>
+        <a href="https://github.com/momenbasel/subScreen" target="_blank" rel="noopener" class="header-link">GitHub</a>
+      </div>
+    </header>
+
+    <section class="panel">
+      <div class="input-row">
+        <div class="input-group grow">
+          <div class="label-row">
+            <label for="targets">Targets</label>
+            <span class="target-count" id="target-count"></span>
+          </div>
+          <div class="textarea-wrap" id="drop-zone">
+            <textarea id="targets" rows="6" spellcheck="false"
+              placeholder="Paste subdomains, URLs, or drop a .txt file&#10;&#10;Supports: raw domains, subfinder, httpx, amass, nmap output&#10;Comma or newline separated - duplicates removed automatically"></textarea>
+            <div class="drop-overlay" id="drop-overlay">Drop file here</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-row">
+        <div class="input-group">
+          <label for="provider">Provider</label>
+          <select id="provider">
+            <option value="thum">thum.io (free, no key)</option>
+            <option value="urlbox">urlbox.io (API key required)</option>
+            <option value="manual">Manual (open in tabs)</option>
+          </select>
+        </div>
+
+        <div class="input-group" id="api-key-group" hidden>
+          <label for="api-key">API Key</label>
+          <input type="text" id="api-key" placeholder="Enter API key" spellcheck="false" autocomplete="off">
+        </div>
+
+        <div class="input-group">
+          <label for="size">Screenshot Size</label>
+          <select id="size">
+            <option value="sm">Small (450px)</option>
+            <option value="md" selected>Medium (800px)</option>
+            <option value="lg">Large (1280px)</option>
+            <option value="full">Full HD (1920px)</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="delay">Render Delay</label>
+          <select id="delay">
+            <option value="0" selected>None</option>
+            <option value="2">2s (JS-heavy sites)</option>
+            <option value="5">5s (SPAs)</option>
+            <option value="10">10s (slow renders)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="btn-start" class="btn btn-primary">Start Scan</button>
+        <button id="btn-clear" class="btn btn-ghost">Clear</button>
+        <button id="btn-export" class="btn btn-ghost" disabled>Export Report</button>
+        <button id="btn-copy" class="btn btn-ghost" hidden>Copy Domains</button>
+        <span class="hint">Ctrl+Enter to start</span>
+      </div>
+    </section>
+
+    <section class="stats-bar" id="stats-bar" hidden>
+      <div class="stats-row">
+        <div class="stats">
+          <span class="stat">Total <strong id="stat-total">0</strong></span>
+          <span class="stat stat-ok">Loaded <strong id="stat-loaded">0</strong></span>
+          <span class="stat stat-err">Failed <strong id="stat-failed">0</strong></span>
+          <span class="stat stat-wait">Pending <strong id="stat-pending">0</strong></span>
+        </div>
+        <div class="stats-right">
+          <input type="text" id="search" class="search-input" placeholder="Filter domains..." spellcheck="false">
+          <button id="btn-retry-failed" class="btn btn-sm btn-ghost" hidden>Retry Failed</button>
+          <div class="filters">
+            <button class="filter active" data-filter="all">All</button>
+            <button class="filter" data-filter="loaded">Loaded</button>
+            <button class="filter" data-filter="failed">Failed</button>
+            <button class="filter" data-filter="pending">Pending</button>
+          </div>
+        </div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </section>
+
+    <section class="gallery" id="gallery"></section>
+
+    <div class="empty-state" id="empty-state">
+      <div class="empty-icon"></div>
+      <p class="empty-title">No screenshots yet</p>
+      <p class="empty-sub">Enter target domains above and click Start Scan</p>
+    </div>
+  </div>
+
+  <div class="lightbox" id="lightbox" hidden>
+    <div class="lightbox-backdrop" id="lb-backdrop"></div>
+    <button class="lightbox-close" id="lb-close" aria-label="Close">&times;</button>
+    <div class="lightbox-body">
+      <button class="lightbox-nav lb-prev" id="lb-prev" aria-label="Previous">&#8249;</button>
+      <div class="lightbox-main">
+        <img id="lb-img" src="" alt="" draggable="false">
+        <div class="lightbox-info">
+          <span id="lb-domain" class="lb-domain"></span>
+          <span id="lb-counter" class="lb-counter"></span>
+          <a id="lb-open" href="#" target="_blank" rel="noopener" class="lb-link">Open in new tab</a>
+        </div>
+      </div>
+      <button class="lightbox-nav lb-next" id="lb-next" aria-label="Next">&#8250;</button>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+  <script src="js/app.js"></script>
+</body>
+</html>
